@@ -15,9 +15,7 @@
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
+            <div class="comment-text">Это будет первый комментарий на этой странице</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -32,9 +30,7 @@
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
+            <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -44,59 +40,78 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          id="input"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="textarea"
-        ></textarea>
+      <ul class="comments">
+        <li id="commentContainer">
+<div class="add-form">
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input"/>
+        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textarea"></textarea>
         <div class="add-form-row">
           <button id="add" class="add-form-button">Добавить</button>
           <p id="result"></p>
         </div>
-        <div id="commentContainer"></div>
+        </li>
+      </ul>
       </div>
     </div>
   </body>
-
   <script>
-    const buttonEl = document.getElementById("add");
-    const inputEl = document.getElementById("input");
-    const textareaEl = document.getElementById("textarea");
+  
+  const buttonEl = document.getElementById("add");
+  const inputEl = document.getElementById("input");
+  const textareaEl = document.getElementById("textarea");
 
-    buttonEl.addEventListener("click", () => {
-      const name = document.getElementById("input").value;
-      const comment = document.getElementById("textarea").value;
-      if (!name || !comment) {
-        alert("Пожалуйста, укажите имя и текст комментария.");
-        return;
-      }
-      const date = new Date();
-      const formattedDate = `${date.getDate()}.${
-        date.getMonth() + 1
-      }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+  buttonEl.addEventListener("click", () => {
+    const name = document.getElementById("input").value;
+    const comment = document.getElementById("textarea").value;
 
-      const commentElement = document.createElement("div");
-      commentElement.innerHTML = `
-                <p>Имя: ${name}</p>
-                <p>Комментарий: ${comment}</p>
-                <p>Дата: ${formattedDate}</p>
-                <p>Лайки: 0</p>
-            `;
+    if (!name || !comment) {
+      alert("Пожалуйста, укажите имя и текст комментария.");
+      return;
+    }
 
-      document.getElementById("commentContainer").appendChild(commentElement);
+    const date = new Date();
+    const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
 
-      document.getElementById("input").value = "";
-      document.getElementById("textarea").value = "";
-    });
+    const newComment = document.createElement("li");
+    newComment.classList.add("comment");
+
+    const commentHeader = document.createElement("div");
+    commentHeader.classList.add("comment-header");
+    commentHeader.innerHTML = `
+      <div>${name}</div>
+      <div>${formattedDate}</div>
+    `;
+
+    const commentBody = document.createElement("div");
+    commentBody.classList.add("comment-body");
+    commentBody.innerHTML = `
+      <div class="comment-text">
+        ${comment}
+      </div>
+    `;
+
+    const commentFooter = document.createElement("div");
+    commentFooter.classList.add("comment-footer");
+    commentFooter.innerHTML = `
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    `;
+
+    newComment.appendChild(commentHeader);
+    newComment.appendChild(commentBody);
+    newComment.appendChild(commentFooter);
+
+    document.getElementById("commentContainer").appendChild(newComment);
+
+    const commentContainer = document.getElementById("commentContainer");
+    commentContainer.insertBefore(newComment, commentContainer.firstChild);
+    
+    document.getElementById("input").value = "";
+    document.getElementById("textarea").value = "";
+  });
     console.log("It works!");
   </script>
+  
 </html>
