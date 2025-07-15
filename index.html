@@ -55,14 +55,13 @@
     </div>
   </body>
   <script>
-  
   const buttonEl = document.getElementById("add");
   const inputEl = document.getElementById("input");
   const textareaEl = document.getElementById("textarea");
 
   buttonEl.addEventListener("click", () => {
-    const name = document.getElementById("input").value;
-    const comment = document.getElementById("textarea").value;
+    const name = inputEl.value;
+    const comment = textareaEl.value;
 
     if (!name || !comment) {
       alert("Пожалуйста, укажите имя и текст комментария.");
@@ -75,43 +74,31 @@
     const newComment = document.createElement("li");
     newComment.classList.add("comment");
 
-    const commentHeader = document.createElement("div");
-    commentHeader.classList.add("comment-header");
-    commentHeader.innerHTML = `
-      <div>${name}</div>
-      <div>${formattedDate}</div>
-    `;
-
-    const commentBody = document.createElement("div");
-    commentBody.classList.add("comment-body");
-    commentBody.innerHTML = `
-      <div class="comment-text">
-        ${comment}
+    newComment.innerHTML = `
+      <div class="comment-header">
+        <div>${name}</div>
+        <div>${formattedDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${comment}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
       </div>
     `;
-
-    const commentFooter = document.createElement("div");
-    commentFooter.classList.add("comment-footer");
-    commentFooter.innerHTML = `
-      <div class="likes">
-        <span class="likes-counter">0</span>
-        <button class="like-button"></button>
-      </div>
-    `;
-
-    newComment.appendChild(commentHeader);
-    newComment.appendChild(commentBody);
-    newComment.appendChild(commentFooter);
-
-    document.getElementById("commentContainer").appendChild(newComment);
 
     const commentContainer = document.getElementById("commentContainer");
     commentContainer.insertBefore(newComment, commentContainer.firstChild);
-    
-    document.getElementById("input").value = "";
-    document.getElementById("textarea").value = "";
+
+    inputEl.value = "";
+    textareaEl.value = "";
   });
-    console.log("It works!");
-  </script>
+  console.log("It works!");
+</script>
   
 </html>
