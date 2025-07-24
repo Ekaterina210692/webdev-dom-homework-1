@@ -15,7 +15,9 @@
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">Это будет первый комментарий на этой странице</div>
+            <div class="comment-text">
+              Это будет первый комментарий на этой странице
+            </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -30,7 +32,9 @@
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
+            <div class="comment-text">
+              Мне нравится как оформлена эта страница! ❤
+            </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -40,9 +44,20 @@
           </div>
         </li>
       </ul>
-<div class="add-form">
-        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input"/>
-        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textarea"></textarea>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          id="input"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          id="textarea"
+        ></textarea>
         <div class="add-form-row">
           <button id="add" class="add-form-button">Добавить</button>
           <p id="result"></p>
@@ -52,27 +67,29 @@
   </body>
 
   <script>
-  const buttonEl = document.getElementById("add");
-  const inputEl = document.getElementById("input");
-  const textareaEl = document.getElementById("textarea");
-  const commentsEl = document.querySelector(".comments");
+    const buttonEl = document.getElementById("add");
+    const inputEl = document.getElementById("input");
+    const textareaEl = document.getElementById("textarea");
+    const commentsEl = document.querySelector(".comments");
 
-  buttonEl.addEventListener("click", () => {
-    const name = inputEl.value;
-    const comment = textareaEl.value;
+    buttonEl.addEventListener("click", () => {
+      const name = inputEl.value;
+      const comment = textareaEl.value;
 
-    if (!name || !comment) {
-      alert("Пожалуйста, укажите имя и текст комментария.");
-      return;
-    }
+      if (!name || !comment) {
+        alert("Пожалуйста, укажите имя и текст комментария.");
+        return;
+      }
 
-    const date = new Date();
-    const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+      const date = new Date();
+      const formattedDate = `${date.getDate()}.${
+        date.getMonth() + 1
+      }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
 
-    const newComment = document.createElement("li");
-    newComment.classList.add("comment");
+      const newComment = document.createElement("li");
+      newComment.classList.add("comment");
 
-    newComment.innerHTML = `
+      newComment.innerHTML = `
       <div class="comment-header">
         <div>${name}</div>
         <div>${formattedDate}</div>
@@ -90,12 +107,32 @@
       </div>
     `;
 
-    commentsEl.appendChild(newComment)
+      const likeButton = newComment.querySelector(".like-button");
+      likeButton.addEventListener("click", handleLikeClick);
 
-    inputEl.value = "";
-    textareaEl.value = "";
-  });
-  console.log("It works!");
-</script>
-  
+      commentsEl.appendChild(newComment);
+
+      inputEl.value = "";
+      textareaEl.value = "";
+
+      const likesEl = document.querySelector(".likes");
+
+      function handleLikeClick(event) {
+        const likeButton = event.target;
+        const likesCounter = likeButton
+          .closest(".likes")
+          .querySelector(".likes-counter");
+        const currentLikes = parseInt(likesCounter.textContent);
+
+        if (likeButton.classList.contains("-active-like")) {
+          likeButton.classList.remove("-active-like");
+          likesCounter.textContent = currentLikes - 1;
+        } else {
+          likeButton.classList.add("-active-like");
+          likesCounter.textContent = currentLikes + 1;
+        }
+      }
+    });
+    console.log("It works!");
+  </script>
 </html>
