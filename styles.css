@@ -12,6 +12,7 @@ body {
     padding-bottom: 200px;
     background: #202020;
     min-height: 100vh;
+    gap: 25px;
   }
 
   .comments,
