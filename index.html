@@ -72,6 +72,8 @@
     const textareaEl = document.getElementById("textarea");
     const commentsEl = document.querySelector(".comments");
 
+    const comments = [];
+
     buttonEl.addEventListener("click", () => {
       const name = inputEl.value;
       const comment = textareaEl.value;
@@ -86,53 +88,66 @@
         date.getMonth() + 1
       }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
 
-      const newComment = document.createElement("li");
-      newComment.classList.add("comment");
+      const newComment = {
+        name: name,
+        comment: comment,
+        date: formattedDate,
+        isLiked: false,
+        likesCount: 0,
+      };
 
-      newComment.innerHTML = `
-      <div class="comment-header">
-        <div>${name}</div>
-        <div>${formattedDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${comment}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    `;
-
-      const likeButton = newComment.querySelector(".like-button");
-      likeButton.addEventListener("click", handleLikeClick);
-
-      commentsEl.appendChild(newComment);
+      comments.push(newComment);
+      renderComments();
 
       inputEl.value = "";
       textareaEl.value = "";
-
-      const likesEl = document.querySelector(".likes");
-
-      function handleLikeClick(event) {
-        const likeButton = event.target;
-        const likesCounter = likeButton
-          .closest(".likes")
-          .querySelector(".likes-counter");
-        const currentLikes = parseInt(likesCounter.textContent);
-
-        if (likeButton.classList.contains("-active-like")) {
-          likeButton.classList.remove("-active-like");
-          likesCounter.textContent = currentLikes - 1;
-        } else {
-          likeButton.classList.add("-active-like");
-          likesCounter.textContent = currentLikes + 1;
-        }
-      }
     });
+
+    function renderComments() {
+      commentsEl.innerHTML = "";
+
+      comments.forEach((comment, index) => {
+        const newComment = document.createElement("li");
+        newComment.classList.add("comment");
+
+        newComment.innerHTML = `
+                    <div class="comment-header">
+                        <div>${comment.name}</div>
+                        <div>${comment.date}</div>
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-text">
+                            ${comment.comment}
+                        </div>
+                    </div>
+                    <div class="comment-footer">
+                        <div class="likes">
+                            <span class="likes-counter">${comment.likesCount}</span>
+                            <button class="like-button" data-comment-index="${index}"></button>
+                        </div>
+                    </div>
+                `;
+
+        const likeButton = newComment.querySelector(".like-button");
+        likeButton.addEventListener("click", handleLikeClick);
+
+        commentsEl.appendChild(newComment);
+      });
+    }
+
+    function handleLikeClick(event) {
+      const likeButton = event.target;
+      const commentIndex = likeButton.dataset.commentIndex;
+      const comment = comments[commentIndex];
+
+      comment.isLiked = !comment.isLiked;
+      comment.likesCount = comment.isLiked
+        ? comment.likesCount + 1
+        : comment.likesCount - 1;
+
+      renderComments();
+    }
+    renderComments();
     console.log("It works!");
   </script>
 </html>
