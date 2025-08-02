@@ -15,7 +15,9 @@
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">Это будет первый комментарий на этой странице</div>
+            <div class="comment-text">
+              Это будет первый комментарий на этой странице
+            </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -30,7 +32,9 @@
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
+            <div class="comment-text">
+              Мне нравится как оформлена эта страница! ❤
+            </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -40,9 +44,20 @@
           </div>
         </li>
       </ul>
-<div class="add-form">
-        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input"/>
-        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textarea"></textarea>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          id="input"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          id="textarea"
+        ></textarea>
         <div class="add-form-row">
           <button id="add" class="add-form-button">Добавить</button>
           <p id="result"></p>
@@ -52,50 +67,87 @@
   </body>
 
   <script>
-  const buttonEl = document.getElementById("add");
-  const inputEl = document.getElementById("input");
-  const textareaEl = document.getElementById("textarea");
-  const commentsEl = document.querySelector(".comments");
+    const buttonEl = document.getElementById("add");
+    const inputEl = document.getElementById("input");
+    const textareaEl = document.getElementById("textarea");
+    const commentsEl = document.querySelector(".comments");
 
-  buttonEl.addEventListener("click", () => {
-    const name = inputEl.value;
-    const comment = textareaEl.value;
+    const comments = [];
 
-    if (!name || !comment) {
-      alert("Пожалуйста, укажите имя и текст комментария.");
-      return;
+    buttonEl.addEventListener("click", () => {
+      const name = inputEl.value;
+      const comment = textareaEl.value;
+
+      if (!name || !comment) {
+        alert("Пожалуйста, укажите имя и текст комментария.");
+        return;
+      }
+
+      const date = new Date();
+      const formattedDate = `${date.getDate()}.${
+        date.getMonth() + 1
+      }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+
+      const newComment = {
+        name: name,
+        comment: comment,
+        date: formattedDate,
+        isLiked: false,
+        likesCount: 0,
+      };
+
+      comments.push(newComment);
+      renderComments();
+
+      inputEl.value = "";
+      textareaEl.value = "";
+    });
+
+    function renderComments() {
+      commentsEl.innerHTML = "";
+
+      comments.forEach((comment, index) => {
+        const newComment = document.createElement("li");
+        newComment.classList.add("comment");
+
+        newComment.innerHTML = `
+                    <div class="comment-header">
+                        <div>${comment.name}</div>
+                        <div>${comment.date}</div>
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-text">
+                            ${comment.comment}
+                        </div>
+                    </div>
+                    <div class="comment-footer">
+                        <div class="likes">
+                            <span class="likes-counter">${comment.likesCount}</span>
+                            <button class="like-button" data-comment-index="${index}"></button>
+                        </div>
+                    </div>
+                `;
+
+        const likeButton = newComment.querySelector(".like-button");
+        likeButton.addEventListener("click", handleLikeClick);
+
+        commentsEl.appendChild(newComment);
+      });
     }
 
-    const date = new Date();
-    const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+    function handleLikeClick(event) {
+      const likeButton = event.target;
+      const commentIndex = likeButton.dataset.commentIndex;
+      const comment = comments[commentIndex];
 
-    const newComment = document.createElement("li");
-    newComment.classList.add("comment");
+      comment.isLiked = !comment.isLiked;
+      comment.likesCount = comment.isLiked
+        ? comment.likesCount + 1
+        : comment.likesCount - 1;
 
-    newComment.innerHTML = `
-      <div class="comment-header">
-        <div>${name}</div>
-        <div>${formattedDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${comment}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    `;
-
-    commentsEl.appendChild(newComment)
-
-    inputEl.value = "";
-    textareaEl.value = "";
-  });
-  console.log("It works!");
-</script>
-  
+      renderComments();
+    }
+    renderComments();
+    console.log("It works!");
+  </script>
 </html>
