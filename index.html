@@ -97,7 +97,10 @@
       const name = inputEl.value;
       const comment = textareaEl.value;
 
-      if (!name || !comment) {
+      const sanitizedName = sanitizeHtml(name);
+      const sanitizedComment = sanitizeHtml(comment);
+
+      if (!sanitizedName || !sanitizedComment) {
         alert("Пожалуйста, укажите имя и текст комментария.");
         return;
       }
@@ -108,8 +111,8 @@
       }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
 
       const newComment = {
-        name: name,
-        comment: comment,
+        name: sanitizedName,
+        comment: sanitizedComment,
         date: formattedDate,
         isLiked: false,
         likesCount: 0,
