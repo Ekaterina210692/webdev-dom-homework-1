@@ -45,15 +45,25 @@ export const handleAddComment = () => {
   const date = new Date();
   const formattedDate = `${date.getDate().toString().padStart(2, "0")}.${(date.getMonth() + 1).toString().padStart(2, "0")}.${date.getFullYear()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
-  comments.push({
-    name: sanitizeHtml(name),
-    comment: sanitizeHtml(comment),
-    date: formattedDate,
-    isLiked: false,
-    likesCount: 0,
-  });
-
-  inputEl.value = "";
-  textareaEl.value = "";
-  renderComments();
+fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            comment: comment,
+            date: formattedDate,
+            isLiked: false,
+            likesCount: 0
+        })
+    })
+    .then(response => response.json())
+    .then(() => {
+        inputEl.value = '';
+        textareaEl.value = '';
+        renderComments();
+    })
+    .catch(error => 
+      console.log('Ошибка отправки комментария:', error));
 };

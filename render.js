@@ -2,14 +2,17 @@ import { comments } from "./comments.js";
 import { handleLikeClick, handleQuoteClick } from "./handlers.js";
 
 export const renderComments = () => {
-  const commentsEl = document.querySelector(".comments");
-  commentsEl.innerHTML = "";
+  fetch("/api/comments")
+    .then((response) => response.json())
+    .then((comments) => {
+      const commentsEl = document.querySelector(".comments");
+      commentsEl.innerHTML = "";
 
-  comments.forEach((comment, index) => {
-    const commentElement = document.createElement("li");
-    commentElement.className = "comment";
+      comments.forEach((comment, index) => {
+        const commentElement = document.createElement("li");
+        commentElement.className = "comment";
 
-    commentElement.innerHTML = `
+        commentElement.innerHTML = `
             <div class="comment-header">
                 <div>${comment.name}</div>
                 <div>${comment.date}</div>
@@ -26,10 +29,12 @@ export const renderComments = () => {
             </div>
         `;
 
-    commentElement
-      .querySelector(".like-button")
-      .addEventListener("click", handleLikeClick);
-    commentElement.addEventListener("click", handleQuoteClick);
-    commentsEl.appendChild(commentElement);
-  });
+        commentElement
+          .querySelector(".like-button")
+          .addEventListener("click", handleLikeClick);
+        commentElement.addEventListener("click", handleQuoteClick);
+        commentsEl.appendChild(commentElement);
+      });
+    })
+    .catch((error) => console.log("Ошибка загрузки коментария:", error));
 };
