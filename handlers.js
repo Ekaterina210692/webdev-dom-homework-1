@@ -2,7 +2,7 @@ import { comments, sanitizeHtml } from "./comments.js";
 import { renderComments } from "./render.js";
 
 export const handleLikeClick = (event) => {
-    event.stopPropagation();
+  event.stopPropagation();
   const likeButton = event.target.closest(".like-button");
   if (!likeButton) return;
 
@@ -45,25 +45,31 @@ export const handleAddComment = () => {
   const date = new Date();
   const formattedDate = `${date.getDate().toString().padStart(2, "0")}.${(date.getMonth() + 1).toString().padStart(2, "0")}.${date.getFullYear()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
-fetch('/api/comments', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            comment: comment,
-            date: formattedDate,
-            isLiked: false,
-            likesCount: 0
-        })
+  const personalKey = "";
+  const handleAddComment = (event) => {
+    event.preventDefault();
+
+    const name = document.querySelector(".name-input").value;
+    const comment = document.querySelector(".comment-input").value;
+    fetch(`https://wedev-api.sky.pro/api/v1/ekaterina-vasileva/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        comment: comment,
+        date: formattedDate,
+        isLiked: false,
+        likesCount: 0,
+      }),
     })
-    .then(response => response.json())
-    .then(() => {
-        inputEl.value = '';
-        textareaEl.value = '';
+      .then((response) => response.json())
+      .then(() => {
+        inputEl.value = "";
+        textareaEl.value = "";
         renderComments();
-    })
-    .catch(error => 
-      console.log('Ошибка отправки комментария:', error));
+      })
+      .catch((error) => console.log("Ошибка отправки комментария:", error));
+  };
 };
