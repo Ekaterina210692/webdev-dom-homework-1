@@ -1,7 +1,12 @@
-import { initAddCommentHandler } from "./initListener.js";
-import { renderComments } from "./render.js";
+import { fetchComments } from "/modules/api.js";
+import { updateComments } from "/modules/comments.js"
+import { initAddCommentHandler } from "/modules/initListener.js";
+import { renderComments } from "/modules/render.js";
 
-// document.addEventListener("DOMContentLoaded", () => {});
 
-initAddCommentHandler();
-renderComments();
+fetchComments().then(date => {
+ updateComments(date);
+ renderComments
+})
+
+initAddCommentHandler(renderComments)

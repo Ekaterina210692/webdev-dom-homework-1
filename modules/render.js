@@ -1,10 +1,10 @@
-import { comments } from "./comments.js";
-import { handleLikeClick, handleQuoteClick } from "./handlers.js";
+import { comments } from "/modules/comments.js";
+import { handleLikeClick, handleQuoteClick } from "/modules/sanitizeHtml.js";
 
 export const renderComments = () => {
-  const personalKey = 'ekaterina-vasileva'; 
+  const personalKey = 'ekaterinasin'; 
   
-  fetch(`https://wedev-api.sky.pro/api/v1/${personalKey}/comments`, {
+  fetch(`https://wedev-api.sky.pro/api/v1/ekaterinasin`, {
     method: 'GET'
   })
     .then(response => {
