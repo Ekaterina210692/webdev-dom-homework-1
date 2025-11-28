@@ -22,6 +22,7 @@ export const postComment = async (comment, name) => {
         const response = await fetch('https://wedev-api.sky.pro/api/v1/ekaterinasin', {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 name: name,
