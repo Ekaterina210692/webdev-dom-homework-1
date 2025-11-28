@@ -1,40 +1,40 @@
-import { postComment } from "./api";
-import { comments, updateComments } from "./comments";
-import { renderComments } from "./render";
-import { handleAddComment } from "/modules/sani.js";
+import { postComment } from "/modules/api.js";
+import { updateComments, sanitizeHtml } from "/modules/comments.js";
 
-export const initAddCommentHandler = () => {
-  document.getElementById("add").addEventListener("click", handleAddComment);
-};
+export const initAddCommentHandler = (renderComments) => {
+  const nameInput = document.getElementById("input");
+  const textInput = document.getElementById("textarea");
+  const addButton = document.getElementById("add");
 
-export const ytytgth = () => {
-  const text = document.getElementById("text-input");
-  const commentsElements = document.querySelectorAll(".comment");
+  addButton.addEventListener("click", async () => {
+    const name = nameInput.value.trim();
+    const comment = textInput.value.trim();
 
-  for (const commentElement of commentsElements) {
-    commentElement.addEventListener("click", () => {
-      const currentComment = comments[commentElement.dataset.index];
-      text.value = `${currentComment.name}: ${currentComment.text}`;
-    });
-  }
-};
-
-export const initAddCommentListener = (renderComments) => {
-  const name = document.getElementById("name-input");
-  const text = document.getElementById("text-input");
-  const addButton = document.querySelector(".add-from-button");
-
-  addButton.addEventListener("click", () => {
-    if (!name.value || !text.value) {
-      console.error("заполните форму");
+    if (!name || !comment) {
+      alert("Заполните все поля!");
       return;
     }
 
-    postComment(sanitizeHtml(text.value), sanitizeHtml(name.value)).then((data) => {
-      updateComments(date)
-      renderComments()
-      name.value = ""
-      text.value = ""
-    });
+    try {
+      const sanitizedComment = sanitizeHtml(comment);
+      const sanitizedName = sanitizeHtml(name);
+
+      const response = await postComment(sanitizedComment, sanitizedName);
+
+      if (!response || !response.comments) {
+        throw new Error("Неверный ответ от сервера");
+      }
+
+      updateComments(response.comments);
+      renderComments();
+      nameInput.value = "";
+      textInput.value = "";
+    } catch (error) {
+      console.error("Произошла ошибка при отправке комментария:", error);
+      alert("Не удалось отправить комментарий. Попробуйте позже.");
+    } finally {
+      nameInput.value = "";
+      textInput.value = "";
+    }
   });
 };
