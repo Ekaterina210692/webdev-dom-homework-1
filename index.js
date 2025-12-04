@@ -3,8 +3,8 @@ import { updateComments } from "/modules/comments.js";
 import { initAddCommentHandler } from "/modules/initListener.js";
 import { renderComments } from "/modules/render.js";
 
-fetchComments().then((data) => {
-    updateComments(data)
+fetchComments().then(() => {
+    updateComments()
     renderComments()
 })
 

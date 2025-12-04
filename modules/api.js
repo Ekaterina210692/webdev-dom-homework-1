@@ -14,28 +14,28 @@ export const fetchComments = () => {
         }
       })
       return appComments
-})
 }
 
 export const postComment = async (comment, name) => {
-    try {
-        const response = await fetch('https://wedev-api.sky.pro/api/v1/ekaterinasin/comments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: name,
-                comment: comment
-            })
-        });
+  try {
+    const dataToSend = {
+      name: name,
+      text: comment
+    }
+    const response = await fetch("https://wedev-api.sky.pro/api/v1/ekaterinasin/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+        text: comment,
+      }),
+    });
 
         if (!response.ok) {
             throw new Error(`Ошибка: ${response.statusText}`);
         }
 
-        return response.json();
-    } catch (error) {
-        throw error;
-    }
+    return response.json();
+  } catch (error) {
+    throw error;
+  }
 };
