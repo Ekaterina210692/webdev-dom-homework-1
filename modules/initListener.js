@@ -1,4 +1,4 @@
-import { postComment } from "/modules/api.js";
+import { fetchComments, postComment } from "/modules/api.js";
 import { updateComments, sanitizeHtml } from "/modules/comments.js";
 
 export const initAddCommentHandler = (renderComments) => {
@@ -16,25 +16,20 @@ export const initAddCommentHandler = (renderComments) => {
     }
 
     try {
-      const sanitizedComment = sanitizeHtml(comment);
       const sanitizedName = sanitizeHtml(name);
+      const sanitizedComment = sanitizeHtml(comment);
 
-      const response = await postComment(sanitizedComment, sanitizedName);
+      await postComment(sanitizedName, sanitizedComment);
 
-      if (!response || !response.comments) {
-        throw new Error("Неверный ответ от сервера");
-      }
-
-      updateComments(response.comments);
+      const updatedComments = await fetchComments();
+      updateComments(updatedComments);
       renderComments();
+
       nameInput.value = "";
       textInput.value = "";
     } catch (error) {
-      console.error("Произошла ошибка при отправке комментария:", error);
-      alert("Не удалось отправить комментарий. Попробуйте позже.");
-    } finally {
-      nameInput.value = "";
-      textInput.value = "";
+      console.error("Ошибка:", error);
+      alert("Не удалось отправить комментарий");
     }
   });
 };
