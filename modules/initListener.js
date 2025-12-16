@@ -29,7 +29,7 @@ export const initAddCommentHandler = (renderComments) => {
       textInput.value = "";
     } catch (error) {
       console.error("Ошибка:", error);
-      alert("Не удалось отправить комментарий");
+      alert("error.message");
     }
   });
 };

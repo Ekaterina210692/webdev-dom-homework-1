@@ -19,6 +19,8 @@ document.addEventListener("click", (event) => {
   const button = event.target.closest(".like-button");
   if (!button) return;
 
+  event.stopPropagation();
+
   const index = button.dataset.commentIndex;
   if (index === undefined || index === null) return;
   
@@ -33,6 +35,8 @@ document.addEventListener("click", (event) => {
 });
 
 const handleQuoteClick = (event) => {
+  if (event.target.closest(".like-button")) return;
+
   const commentElement = event.target.closest(".comment");
   if (!commentElement) return;
 
