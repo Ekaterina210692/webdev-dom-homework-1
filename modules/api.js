@@ -25,14 +25,15 @@ export const postComment = async (name, text) => {
 
   if (!response.ok) {
     const errorText = await response.text();
-    if (response.status === 400) {
-      throw new Error ("имя и комментарии обязательны");
-    } else if (response.status === 500) {
-      throw new Error ("сервер сломался, попробуй позже");
-    } else{
-    throw new Error(`Ошибка: ${response.status} ${errorText}`);
+    switch(response.status) {
+        case 400:
+          throw new Error("имя и комментарии обязательны");
+        case 500:
+          throw new Error("сервер сломался, попробуй позже");
+        default:
+          throw new Error(`Ошибка: ${response.status} - ${errorText}`);
     }
   }
 
   return response.json();
-};
+}; 
