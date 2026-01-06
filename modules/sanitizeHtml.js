@@ -26,5 +26,5 @@ export const handleQuoteClick = (event) => {
   const comment = comments[commentIndex];
 
   const textareaEl = document.getElementById("textarea");
-  textareaEl.value = `${comment.name}: ${comment.comment}`;
+  textareaEl.value = `${comment.name}: ${comment.text}`;
 };
