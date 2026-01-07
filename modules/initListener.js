@@ -14,12 +14,16 @@ export const initAddCommentHandler = (renderComments) => {
       alert("Заполните все поля!");
       return;
     }
+document.querySelector('.form-loading').style.display = 'block'
+document.querySelector('.add-form').style.display = 'none'
 
     try {
       const sanitizedName = sanitizeHtml(name);
       const sanitizedComment = sanitizeHtml(comment);
 
       await postComment(sanitizedName, sanitizedComment);
+document.querySelector('.form-loading').style.display = 'none'
+document.querySelector('.add-form').style.display = 'flex'
 
       const updatedComments = await fetchComments();
       updateComments(updatedComments);
