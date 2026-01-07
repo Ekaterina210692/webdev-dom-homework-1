@@ -14,16 +14,16 @@ export const initAddCommentHandler = (renderComments) => {
       alert("Заполните все поля!");
       return;
     }
-document.querySelector('.form-loading').style.display = 'block'
-document.querySelector('.add-form').style.display = 'none'
+    document.querySelector(".form-loading").style.display = "block";
+    document.querySelector(".add-form").style.display = "none";
 
     try {
       const sanitizedName = sanitizeHtml(name);
       const sanitizedComment = sanitizeHtml(comment);
 
       await postComment(sanitizedName, sanitizedComment);
-document.querySelector('.form-loading').style.display = 'none'
-document.querySelector('.add-form').style.display = 'flex'
+      document.querySelector(".form-loading").style.display = "none";
+      document.querySelector(".add-form").style.display = "flex";
 
       const updatedComments = await fetchComments();
       updateComments(updatedComments);
@@ -32,8 +32,15 @@ document.querySelector('.add-form').style.display = 'flex'
       nameInput.value = "";
       textInput.value = "";
     } catch (error) {
-      console.error("Ошибка:", error);
-      alert("error.message");
+      document.querySelector(".form-loading").style.display = "none";
+      document.querySelector(".add-form").style.display = "flex";
+      if (error.massage === "имя и комментарий обязательны") {
+        alert(
+          "имя пользователя и комментарий должны быть не короче 3х символов"
+        );
+      }
+      nameInput.value = "";
+      textInput.value = "";
     }
   });
 };
