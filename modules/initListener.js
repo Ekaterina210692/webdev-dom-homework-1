@@ -22,6 +22,7 @@ export const initAddCommentHandler = (renderComments) => {
       const sanitizedComment = sanitizeHtml(comment);
 
       await postComment(sanitizedName, sanitizedComment);
+      
       document.querySelector(".form-loading").style.display = "none";
       document.querySelector(".add-form").style.display = "flex";
 
@@ -34,6 +35,19 @@ export const initAddCommentHandler = (renderComments) => {
     } catch (error) {
       document.querySelector(".form-loading").style.display = "none";
       document.querySelector(".add-form").style.display = "flex";
+
+      if (error.massage === "failed to fetch") {
+        alert(
+          "нет интернета, попробуйте позже"
+        );
+      }
+
+      if (error.massage === "ошибка сервера") {
+        alert(
+          "сервер сломался, попробуй позже"
+        );
+      }
+
       if (error.massage === "имя и комментарий обязательны") {
         alert(
           "имя пользователя и комментарий должны быть не короче 3х символов"
