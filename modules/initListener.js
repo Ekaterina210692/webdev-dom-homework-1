@@ -22,7 +22,7 @@ export const initAddCommentHandler = (renderComments) => {
       const sanitizedComment = sanitizeHtml(comment);
 
       await postComment(sanitizedName, sanitizedComment);
-      
+
       document.querySelector(".form-loading").style.display = "none";
       document.querySelector(".add-form").style.display = "flex";
 
@@ -36,23 +36,16 @@ export const initAddCommentHandler = (renderComments) => {
       document.querySelector(".form-loading").style.display = "none";
       document.querySelector(".add-form").style.display = "flex";
 
-      if (error.massage === "failed to fetch") {
-        alert(
-          "нет интернета, попробуйте позже"
-        );
+      if (error.message.includes("failed to fetch")) {
+        alert("нет интернета, попробуйте позже");
+      } else if (error.message.includes("сервер сломался")) {
+        alert("сервер сломался, попробуй позже");
+      } else if (error.message.includes("имя и комментарии обязательны")) {
+        alert("имя пользователя и комментарий должны быть не короче 3х символов");
+      } else {
+        alert("Произошла ошибка: " + error.message);
       }
 
-      if (error.massage === "ошибка сервера") {
-        alert(
-          "сервер сломался, попробуй позже"
-        );
-      }
-
-      if (error.massage === "имя и комментарий обязательны") {
-        alert(
-          "имя пользователя и комментарий должны быть не короче 3х символов"
-        );
-      }
       nameInput.value = "";
       textInput.value = "";
     }

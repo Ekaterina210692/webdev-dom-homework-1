@@ -18,24 +18,25 @@ export const fetchComments = () => {
 };
 
 export const postComment = async (name, text) => {
-  const response = await fetch(baseUrl + "/comments", {
-    method: "POST",
-    body: JSON.stringify({ name, text }),
-  });
+  try {
+const response = await fetch(baseUrl + "/comments", {
+      method: "POST",
+      body: JSON.stringify({ name, text }),
+    });
 
-  then((response) => {
-    if (response.status === 500) {
-      throw new Error("сервер сломался, попробуй позже");
+    if (!response.ok) {
+      switch (response.status) {
+        case 500:
+          throw new Error("сервер сломался, попробуй позже");
+        case 400:
+          throw new Error("имя и комментарии обязательны");
+        default:
+          throw new Error("Произошла ошибка при отправке");
+      }
     }
-    if (response.status === 400) {
-      throw new Error("имя и комментарии обязательны");
-    }
-    if (response.status === 201) {
-      return response.json();
-    }
-  });
 
-  then(() => {
-    return fetchComments();
-  });
-};
+    return response.json();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  }
