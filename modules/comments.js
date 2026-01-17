@@ -1,8 +1,12 @@
 export let comments = [];
 
 export const updateComments = (newComments) => {
-  comments = newComments;
+  comments.length = 0;
+  comments.push(...newComments);
 };
+// export const updateComments = (newComments) => {
+//   comments = newComments;
+// };
 
 export const sanitizeHtml = (value) => {
   if (typeof value !== "string") return "";
