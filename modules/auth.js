@@ -1,46 +1,51 @@
 import { loginUser, registerUser, setToken } from "/modules/api.js";
 import { setUserName, renderApp } from "/modules/render.js";
 
-const container = document.querySelector(".container");
-
 export const renderLogin = () => {
+  const container = document.querySelector(".container");
   container.innerHTML = `
     <section class="add-form">
       <h1>Вход</h1>
       <form id="login-form">
-      <input type="text" id="login" placeholder="Логин" required />
-      <input type="password" id="password" placeholder="Пароль" required />
-      <div class="form-loading" style="display: none;">Вход...</div>
-      <fieldset class="add-form-registry">
-        <button id="submit">Войти</button>
-        <a href="#" id="back-to-main">Назад</a>
-      </fieldset>
+        <input type="text" id="login" placeholder="Логин" required />
+        <input type="password" id="password" placeholder="Пароль" required />
+        <div class="form-loading" style="display: none;">Вход...</div>
+        <fieldset class="add-form-registry">
+          <button type="submit">Войти</button>
+          <a href="#" id="back-to-main">Назад</a>
+        </fieldset>
       </form>
     </section>
   `;
 
-  document.getElementById("submit").addEventListener("submit", async () => {
-    const login = document.getElementById("login").value.trim();
-    const password = document.getElementById("password").value.trim();
+  document
+    .getElementById("login-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    if (!login || !password) {
-      alert("Заполните все поля");
-      return;
-    }
+      const login = document.getElementById("login").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-    document.querySelector(".form-loading").style.display = "block";
+      if (!login || !password) {
+        alert("Заполните все поля");
+        return;
+      }
 
-    try {
-      const token = await loginUser(login, password);
-      setToken(token);
-      setUserName(login);
-      renderApp();
-    } catch (error) {
-      alert("Ошибка: " + error.message);
-    } finally {
-      document.querySelector(".form-loading").style.display = "none";
-    }
-  });
+      const loading = document.querySelector(".form-loading");
+      loading.style.display = "block";
+
+      try {
+        const newToken = await loginUser(login, password);
+        setToken(newToken);
+        setUserName(login);
+        localStorage.setItem("userName", login);
+        renderApp();
+      } catch (error) {
+        alert("Ошибка входа: " + error.message);
+      } finally {
+        loading.style.display = "none";
+      }
+    });
 
   document.getElementById("back-to-main").addEventListener("click", (e) => {
     e.preventDefault();
@@ -49,6 +54,7 @@ export const renderLogin = () => {
 };
 
 export const renderRegister = () => {
+  const container = document.querySelector(".container");
   container.innerHTML = `
     <section class="add-form">
       <h1>Регистрация</h1>
@@ -58,14 +64,17 @@ export const renderRegister = () => {
       <input type="password" id="reg-password" placeholder="Пароль" required  />
       <div class="form-loading" style="display: none;">Регистрация...</div>
       <fieldset class="add-form-registry">
-        <button id="submit">Зарегистрироваться</button>
+        <button type="submit">Зарегистрироваться</button>
         <a href="#" id="back-to-main">Назад</a>
       </fieldset>
       </form>
     </section>
   `;
 
-  document.getElementById("subit").addEventListener("submit", async () => {
+  document
+    .getElementById("register-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
     const name = document.getElementById("reg-name").value.trim();
     const login = document.getElementById("reg-login").value.trim();
@@ -85,11 +94,12 @@ export const renderRegister = () => {
     } catch (error) {
       alert("Ошибка: " + error.message);
     } finally {
-      document.querySelector(".form-loading").style.display = "none";
+      loading.style.display = "none";
     }
   });
 
-  document.getElementById("back-to-main").addEventListener("click", () => {
+  document.getElementById("back-to-main").addEventListener("click", (e) => {
+    e.preventDefault();
     renderApp();
   });
 };
