@@ -58,7 +58,7 @@ export const renderRegister = () => {
   container.innerHTML = `
     <section class="add-form">
       <h1>Регистрация</h1>
-      < id="register-form">
+      <form id="register-form">
       <input type="text" id="reg-name" placeholder="Имя" required  />
       <input type="text" id="reg-login" placeholder="Логин" required  />
       <input type="password" id="reg-password" placeholder="Пароль" required  />
