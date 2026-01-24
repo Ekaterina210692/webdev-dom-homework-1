@@ -3,11 +3,7 @@ import { renderApp, loadComments } from "/modules/render.js";
 import { renderLogin, renderRegister } from "/modules/auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (token) {
-    loadComments();
-  } else {
-    renderApp();
-  }
+  loadComments();
 
   document.addEventListener("click", (event) => {
     if (event.target.id === "login-button") {

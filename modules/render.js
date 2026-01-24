@@ -19,6 +19,7 @@ export const loadComments = async () => {
     const loadedComments = await fetchComments();
     updateComments(loadedComments);
     renderComments();
+    renderAddForm();
   } catch (error) {
     alert("Ошибка загрузки комментариев: " + error.message);
     renderApp(); 
@@ -63,6 +64,43 @@ export const renderComments = () => {
 
   document.querySelector(".comments").innerHTML = html;
 };
+
+ const renderAddForm = () => {
+  const container = document.querySelector(".container");
+  const formContainer = document.querySelector(".add-form-container") || document.createElement("div");
+
+  if (!token) {
+    formContainer.classList.add("add-form-container");
+    formContainer.innerHTML = `
+      <p>Чтобы отправить комментарий, 
+        <button id="login-button">Войти</button> 
+        или 
+        <button id="register-button">Зарегистрироваться</button>
+      </p>
+    `;
+  } else {
+    formContainer.classList.add("add-form-container");
+    formContainer.innerHTML = `
+      <div class="add-form">
+        <input type="text" class="add-form-name" id="name-input" value="${userName}" disabled />
+        <textarea class="add-form-text" id="text-input" placeholder="Введите ваш комментарий" rows="4"></textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>
+      </div>
+      <div class="comment-loading" style="display: none; margin-top: 10px;">Комментарий добавляется...</div>
+    `;
+    initAddCommentHandler();
+  }
+
+  if (!document.querySelector(".add-form-container")) {
+    container.appendChild(formContainer);
+  } else {
+    document.querySelector(".add-form-container").replaceWith(formContainer);
+  }
+};
+
+  renderAddForm(); 
 
 function formatDate(date) {
   const d = new Date(date);
