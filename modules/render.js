@@ -9,6 +9,10 @@ export const setUserName = (name) => {
 
 export const loadComments = async () => {
   const container = document.querySelector(".container");
+  if (!container) {
+    console.error("Контейнер .container не найден");
+    return;
+  }
 
   try {
     container.innerHTML = `
@@ -21,23 +25,31 @@ export const loadComments = async () => {
     renderComments();
     renderAddForm();
   } catch (error) {
-    alert("Ошибка загрузки комментариев: " + error.message);
-    renderApp(); 
+    console.error("Ошибка загрузки:", error);
+    container.innerHTML = `
+      <ul class="comments"></ul>
+      <p>Ошибка загрузки комментариев. <button id="retry">Попробовать снова</button></p>
+    `;
+    document.getElementById("retry").addEventListener("click", loadComments);
   }
 };
 
 export const renderApp = () => {
   const container = document.querySelector(".container");
+  if (!container) return;
 
   if (!token) {
     container.innerHTML = `
       <ul class="comments"></ul>
-      <p>Чтобы отправить комментарий, <button id="login-button">Войти</button> или <button id="register-button">Зарегистрироваться</button></p>
+      <p>Чтобы отправить комментарий, 
+        <button id="login-button">Войти</button> 
+        или 
+        <button id="register-button">Зарегистрироваться</button>
+      </p>
     `;
-    return;
+  } else {
+    loadComments();
   }
-
-  loadComments();
 };
 
 export const renderComments = () => {
@@ -62,15 +74,20 @@ export const renderComments = () => {
     })
     .join("");
 
-  document.querySelector(".comments").innerHTML = html;
+  const commentsList = document.querySelector(".comments");
+  if (commentsList) {
+    commentsList.innerHTML = html;
+  }
 };
 
- const renderAddForm = () => {
+export const renderAddForm = () => {
   const container = document.querySelector(".container");
+  if (!container) return;
+
   const formContainer = document.querySelector(".add-form-container") || document.createElement("div");
+  formContainer.className = "add-form-container";
 
   if (!token) {
-    formContainer.classList.add("add-form-container");
     formContainer.innerHTML = `
       <p>Чтобы отправить комментарий, 
         <button id="login-button">Войти</button> 
@@ -79,7 +96,6 @@ export const renderComments = () => {
       </p>
     `;
   } else {
-    formContainer.classList.add("add-form-container");
     formContainer.innerHTML = `
       <div class="add-form">
         <input type="text" class="add-form-name" id="name-input" value="${userName}" disabled />
@@ -100,8 +116,6 @@ export const renderComments = () => {
   }
 };
 
-  renderAddForm(); 
-
 function formatDate(date) {
   const d = new Date(date);
   return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear().toString().slice(-2)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
@@ -111,6 +125,11 @@ export function initAddCommentHandler() {
   const addButton = document.getElementById("add-button");
   const textInput = document.getElementById("text-input");
   const loading = document.querySelector(".comment-loading");
+
+  if (!addButton || !textInput || !loading) {
+    console.error("Элементы формы не найдены");
+    return;
+  }
 
   addButton.addEventListener("click", async () => {
     const text = textInput.value.trim();
@@ -156,18 +175,16 @@ document.addEventListener("click", (event) => {
   const commentElement = event.target.closest(".comment");
   if (!commentElement) return;
 
-  const index = Array.from(commentElement.parentNode.children).indexOf(
-    commentElement,
-  );
+  const index = Array.from(commentElement.parentNode.children).indexOf(commentElement);
   const comment = comments[index];
   if (!comment) return;
 
   const textInput = document.getElementById("text-input");
-  textInput.value = `${comment.name}: ${comment.text}`;
+  if (textInput) {
+    textInput.value = `${comment.name}: ${comment.text}`;
+  }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (token) {
-    loadComments();
-  }
+  renderApp(); 
 });

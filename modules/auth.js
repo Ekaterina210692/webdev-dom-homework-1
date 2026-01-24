@@ -55,26 +55,32 @@ export const renderLogin = () => {
 
 export const renderRegister = () => {
   const container = document.querySelector(".container");
+  if (!container) return;
+
   container.innerHTML = `
     <section class="add-form">
       <h1>Регистрация</h1>
       <form id="register-form">
-      <input type="text" id="reg-name" placeholder="Имя" required  />
-      <input type="text" id="reg-login" placeholder="Логин" required  />
-      <input type="password" id="reg-password" placeholder="Пароль" required  />
-      <div class="form-loading" style="display: none;">Регистрация...</div>
-      <fieldset class="add-form-registry">
-        <button type="submit">Зарегистрироваться</button>
-        <a href="#" id="back-to-main">Назад</a>
-      </fieldset>
+        <input type="text" id="reg-name" placeholder="Имя" required />
+        <input type="text" id="reg-login" placeholder="Логин" required />
+        <input type="password" id="reg-password" placeholder="Пароль" required />
+        <div class="form-loading" style="display: none;">Регистрация...</div>
+        <fieldset class="add-form-registry">
+          <button type="submit">Зарегистрироваться</button>
+          <a href="#" id="back-to-main">Назад</a>
+        </fieldset>
       </form>
     </section>
   `;
 
-  document
-    .getElementById("register-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
+  const form = document.getElementById("register-form");
+  if (!form) {
+    console.error("Форма не найдена после рендера");
+    return;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
     const name = document.getElementById("reg-name").value.trim();
     const login = document.getElementById("reg-login").value.trim();
@@ -85,7 +91,8 @@ export const renderRegister = () => {
       return;
     }
 
-    document.querySelector(".form-loading").style.display = "block";
+    const loading = document.querySelector(".form-loading");
+    loading.style.display = "block";
 
     try {
       await registerUser(name, login, password);
