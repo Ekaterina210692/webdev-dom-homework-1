@@ -106,7 +106,9 @@ export const renderAddForm = () => {
       </div>
       <div class="comment-loading" style="display: none; margin-top: 10px;">Комментарий добавляется...</div>
     `;
-    initAddCommentHandler();
+    setTimeout(() => {
+      initAddCommentHandler();
+    }, 0);
   }
 
   if (!document.querySelector(".add-form-container")) {
