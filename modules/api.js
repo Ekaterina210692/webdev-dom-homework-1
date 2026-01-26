@@ -8,73 +8,117 @@ export const setToken = (newToken) => {
   localStorage.setItem("token", newToken);
 };
 
-export const fetchComments = () => {
-  return fetch(baseUrl + "/comments", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Ошибка загрузки");
-      return response.json();
-    })
-    .then((data) => {
-      return data.comments.map((comment) => ({
-        name: comment.author.name,
-        text: comment.text,
-        date: new Date(comment.date),
-        isLiked: false,
-        likesCount: comment.likes,
-      }));
+export const fetchComments = async () => {
+  try {
+    if (!token) {
+      throw new Error("Отсутствует токен авторизации");
+    }
+
+    const response = await fetch(baseUrl + "/comments", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
+
+    if (!response.ok) {
+      throw new Error("Ошибка загрузки");
+    }
+
+    const data = await response.json();
+
+    if (!data.comments) {
+      throw new Error("В ответе отсутствует поле comments");
+    }
+
+    return data.comments.map((comment) => ({
+      name: comment.author.name,
+      text: comment.text,
+      date: new Date(comment.date),
+      isLiked: false,
+      likesCount: comment.likes,
+    }));
+  } catch (error) {
+    throw new Error(`Ошибка при загрузке комментариев: ${error.message}`);
+  }
 };
 
 export const postComment = async (name, text) => {
-  const response = await fetch(baseUrl + "/comments", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ name, text }),
-  });
+  try {
+    if (!token) {
+      throw new Error("Токен отсутствует. Выполните вход в систему.");
+    }
+    
+    if (typeof name !== 'string' || typeof text !== 'string' || !name.trim() || !text.trim()) {
+      throw new Error("Некорректные данные комментария");
+    }
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    if (response.status === 400) throw new Error("Имя и комментарий обязательны");
-    if (response.status === 500) throw new Error("Сервер сломался, попробуй позже");
-    throw new Error(`Ошибка: ${response.status}`);
+    const response = await fetch(baseUrl + "/comments", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name, text }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error("Ошибка авторизации. Токен недействителен.");
+      }
+      if (response.status === 400) {
+        throw new Error("Имя и комментарий обязательны");
+      }
+      if (response.status === 500) {
+        throw new Error("Сервер сломался, попробуй позже");
+      }
+      throw new Error(`Ошибка: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    throw new Error(`Ошибка при отправке комментария: ${error.message}`);
   }
-
-  return response.json();
-};
+}
 
 export const loginUser = async (login, password) => {
-  const response = await fetch(authHost + "/login", {
-    method: "POST",
-    body: JSON.stringify({ login, password }),
-  });
+  try {
+    const response = await fetch(authHost + "/login", {
+      method: "POST",
+      body: JSON.stringify({ login, password }),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error("Неверные логин или пароль");
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error("Неверные логин или пароль");
+    }
+
+    const data = await response.json();
+    return data.token;
+  } catch (error) {
+    throw new Error(`Ошибка авторизации: ${error.message}`);
   }
-
-  const data = await response.json();
-  return data.token;
 };
 
 export const registerUser = async (name, login, password) => {
-  const response = await fetch(authHost, {
-    method: "POST",
-    body: JSON.stringify({ name, login, password }),
-  });
+  try {
+    const response = await fetch(authHost, {
+      method: "POST",
+      body: JSON.stringify({ name, login, password }),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    if (response.status === 409) throw new Error("Пользователь с таким логином уже существует");
-    if (response.status === 400) throw new Error("Неверные данные");
-    throw new Error("Ошибка регистрации");
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 409) {
+        throw new Error("Пользователь с таким логином уже существует");
+      }
+      if (response.status === 400) {
+        throw new Error("Неверные данные");
+      }
+      throw new Error("Ошибка регистрации");
+    }
+
+    return response;
+  } catch (error) {
+    throw new Error(`Ошибка регистрации: ${error.message}`);
   }
-
-  return response;
 };

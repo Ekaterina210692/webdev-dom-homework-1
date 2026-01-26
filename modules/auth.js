@@ -3,6 +3,8 @@ import { setUserName, renderApp } from "/modules/render.js";
 
 export const renderLogin = () => {
   const container = document.querySelector(".container");
+  if (!container) return;
+
   container.innerHTML = `
     <section class="add-form">
       <h1>Вход</h1>
@@ -18,21 +20,26 @@ export const renderLogin = () => {
     </section>
   `;
 
-  document
-    .getElementById("login-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
+  const form = container.querySelector("#login-form");
+  const loading = container.querySelector(".form-loading");
+  
+  if (!form || !loading) {
+    console.error("Элементы формы не найдены");
+    return;
+  }
 
-      const login = document.getElementById("login").value.trim();
-      const password = document.getElementById("password").value.trim();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const login = form.querySelector("#login").value.trim();
+    const password = form.querySelector("#password").value.trim();
 
       if (!login || !password) {
         alert("Заполните все поля");
         return;
       }
 
-      const loading = document.querySelector(".form-loading");
-      loading.style.display = "block";
+    loading.style.display = "block";
 
       try {
         const newToken = await loginUser(login, password);
@@ -47,10 +54,19 @@ export const renderLogin = () => {
       }
     });
 
-  document.getElementById("back-to-main").addEventListener("click", (e) => {
+  container.querySelector("#back-to-main").addEventListener("click", (e) => {
     e.preventDefault();
     renderApp();
   });
+};
+const validateForm = (name, login, password) => {
+  if (!name || !login || !password) {
+    return "Заполните все поля";
+  }
+  if (password.length < 6) {
+    return "Пароль должен быть не менее 6 символов";
+  }
+  return null;
 };
 
 export const renderRegister = () => {
@@ -73,25 +89,27 @@ export const renderRegister = () => {
     </section>
   `;
 
-  const form = document.getElementById("register-form");
-  if (!form) {
-    console.error("Форма не найдена после рендера");
+const form = container.querySelector("#register-form");
+  const loading = container.querySelector(".form-loading");
+  
+  if (!form || !loading) {
+    console.error("Элементы формы не найдены");
     return;
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("reg-name").value.trim();
-    const login = document.getElementById("reg-login").value.trim();
-    const password = document.getElementById("reg-password").value.trim();
+    const name = form.querySelector("#reg-name").value.trim();
+    const login = form.querySelector("#reg-login").value.trim();
+    const password = form.querySelector("#reg-password").value.trim();
 
-    if (!name || !login || !password) {
-      alert("Заполните все поля");
+    const error = validateForm(name, login, password);
+    if (error) {
+      alert(error);
       return;
     }
 
-    const loading = document.querySelector(".form-loading");
     loading.style.display = "block";
 
     try {
@@ -105,7 +123,7 @@ export const renderRegister = () => {
     }
   });
 
-  document.getElementById("back-to-main").addEventListener("click", (e) => {
+  container.querySelector("#back-to-main").addEventListener("click", (e) => {
     e.preventDefault();
     renderApp();
   });

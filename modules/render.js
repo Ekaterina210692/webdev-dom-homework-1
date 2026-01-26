@@ -7,52 +7,19 @@ export const setUserName = (name) => {
   userName = sanitizeHtml(name);
 };
 
-export const loadComments = async () => {
-  const container = document.querySelector(".container");
-  if (!container) {
-    console.error("Контейнер .container не найден");
-    return;
-  }
-
-  try {
-    container.innerHTML = `
-      <ul class="comments"></ul>
-      <div class="app-loader">Загрузка комментариев...</div>
-    `;
-
-    const loadedComments = await fetchComments();
-    updateComments(loadedComments);
-    renderComments();
-    renderAddForm();
-  } catch (error) {
-    console.error("Ошибка загрузки:", error);
-    container.innerHTML = `
-      <ul class="comments"></ul>
-      <p>Ошибка загрузки комментариев. <button id="retry">Попробовать снова</button></p>
-    `;
-    document.getElementById("retry").addEventListener("click", loadComments);
-  }
-};
-
 export const renderApp = () => {
   const container = document.querySelector(".container");
   if (!container) return;
 
-  if (!token) {
-    container.innerHTML = `
-      <ul class="comments"></ul>
-      <p>Чтобы отправить комментарий, 
-        <button id="login-button">Войти</button> 
-        или 
-        <button id="register-button">Зарегистрироваться</button>
-      </p>
-    `;
-  } else {
-    loadComments();
-  }
+  renderComments();
+  renderAddForm();
 };
 
 export const renderComments = () => {
+  if (!comments || comments.length === 0) {
+    return;
+  }
+
   const html = comments
     .map((comment, index) => {
       return `
@@ -84,9 +51,12 @@ export const renderAddForm = () => {
   const container = document.querySelector(".container");
   if (!container) return;
 
-  const formContainer = document.querySelector(".add-form-container") || document.createElement("div");
-  formContainer.className = "add-form-container";
-
+  let formContainer = container.querySelector(".add-form-container");
+  if (!formContainer) {
+    formContainer = document.createElement("div");
+    formContainer.className = "add-form-container";
+    container.appendChild(formContainer);
+  }
   if (!token) {
     formContainer.innerHTML = `
       <p>Чтобы отправить комментарий, 
@@ -106,24 +76,43 @@ export const renderAddForm = () => {
       </div>
       <div class="comment-loading" style="display: none; margin-top: 10px;">Комментарий добавляется...</div>
     `;
-    setTimeout(() => {
-      initAddCommentHandler();
-    }, 0);
+    initAddCommentHandler(formContainer);
   }
 
-  if (!document.querySelector(".add-form-container")) {
-    container.appendChild(formContainer);
-  } else {
-    document.querySelector(".add-form-container").replaceWith(formContainer);
+  container.appendChild(formContainer);
+}
+
+export const loadComments = async () => {
+  const container = document.querySelector(".container");
+  if (!container) return;
+
+  try {
+    const formContainer = document.querySelector(".add-form-container");
+    if (formContainer) {
+      formContainer.innerHTML = `<div class="app-loader">Загрузка комментариев...</div>`;
+    }
+
+    const loadedComments = await fetchComments();
+    updateComments(loadedComments);
+    renderComments();
+    renderAddForm();
+  } catch (error) {
+    console.error("Ошибка загрузки:", error);
+
+    const formContainer = document.querySelector(".add-form-container");
+    if (formContainer) {
+      formContainer.innerHTML = `<p>Ошибка загрузки комментариев. <button id="retry">Попробовать снова</button></p>`;
+      document.getElementById("retry").addEventListener("click", loadComments);
+    }
   }
-};
+}
 
 function formatDate(date) {
   const d = new Date(date);
   return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear().toString().slice(-2)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export function initAddCommentHandler() {
+export function initAddCommentHandler(formContainer) {
   const addButton = document.getElementById("add-button");
   const textInput = document.getElementById("text-input");
   const loading = document.querySelector(".comment-loading");
@@ -135,8 +124,9 @@ export function initAddCommentHandler() {
 
   addButton.addEventListener("click", async () => {
     const text = textInput.value.trim();
-    if (!text) {
-      alert("Введите комментарий");
+    
+    if (text.length < 5) {
+      alert("Комментарий должен содержать минимум 5 символов");
       return;
     }
 
@@ -144,10 +134,10 @@ export function initAddCommentHandler() {
     loading.style.display = "block";
 
     try {
-      await postComment(userName, sanitizeHtml(text));
-      await loadComments();
+      const newComment = await postComment(userName, text);
+      await loadComments(); 
     } catch (error) {
-      alert(error.message);
+      alert("Ошибка при отправке комментария: " + error.message);
     } finally {
       addButton.disabled = false;
       loading.style.display = "none";
@@ -188,5 +178,9 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  const savedName = localStorage.getItem("userName");
+  if (savedName) {
+    setUserName(savedName);
+  }
   renderApp(); 
 });
