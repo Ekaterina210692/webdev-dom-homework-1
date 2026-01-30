@@ -125,8 +125,8 @@ export function initAddCommentHandler(formContainer) {
   addButton.addEventListener("click", async () => {
     const text = textInput.value.trim();
     
-    if (text.length < 5) {
-      alert("Комментарий должен содержать минимум 5 символов");
+    if (text.length < 3) {
+      alert("Комментарий должен содержать минимум 3 символов");
       return;
     }
 
