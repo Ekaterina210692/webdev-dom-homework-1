@@ -11,6 +11,11 @@ export const renderApp = () => {
   const container = document.querySelector(".container");
   if (!container) return;
 
+  if (!comments || !Array.isArray(comments)) {
+    console.error('Комментарии не загружены');
+    return;
+  }
+
   renderComments();
   renderAddForm();
 };
@@ -66,6 +71,7 @@ export const renderAddForm = () => {
       </p>
     `;
   } else {
+    const name = userName || '';
     formContainer.innerHTML = `
       <div class="add-form">
         <input type="text" class="add-form-name" id="name-input" value="${userName}" disabled />

@@ -1,16 +1,21 @@
 const baseUrl = "https://wedev-api.sky.pro/api/v2/ekaterinasin";
 const authHost = "https://wedev-api.sky.pro/api/user";
 
-export let token = localStorage.getItem("token") || "";
+export let token = "";
 
 export const setToken = (newToken) => {
   token = newToken;
-  localStorage.setItem("token", newToken);
+  localStorage.setItem('token', newToken);
+};
+
+export const getToken = () => {
+  return localStorage.getItem('token') || '';
 };
 
 export const fetchComments = async () => {
   try {
-    if (!token) {
+    const savedToken = getToken();
+    if (!savedToken) {
       throw new Error("Отсутствует токен авторизации");
     }
 
@@ -44,8 +49,10 @@ export const fetchComments = async () => {
 
 export const postComment = async (name, text) => {
   try {
-    if (!token) {
-      throw new Error("Токен отсутствует. Выполните вход в систему.");
+    const currentToken = getToken();
+    
+    if (!currentToken) {
+      throw new Error('Токен отсутствует');
     }
     
     if (typeof name !== 'string' || typeof text !== 'string' || !name.trim() || !text.trim()) {
@@ -71,7 +78,7 @@ export const postComment = async (name, text) => {
       if (response.status === 500) {
         throw new Error("Сервер сломался, попробуй позже");
       }
-      throw new Error(`Ошибка: ${response.status}`);
+      throw new Error(`HTTP ошибка: ${response.status}`);
     }
 
     return response.json();
@@ -82,7 +89,7 @@ export const postComment = async (name, text) => {
 
 export const loginUser = async (login, password) => {
   try {
-    const response = await fetch(authHost + "/login", {
+    const response = await fetch('/api/user/login', {
       method: "POST",
       body: JSON.stringify({ login, password }),
     });
@@ -101,7 +108,7 @@ export const loginUser = async (login, password) => {
 
 export const registerUser = async (name, login, password) => {
   try {
-    const response = await fetch(authHost, {
+    const response = await fetch('/api/user', {
       method: "POST",
       body: JSON.stringify({ name, login, password }),
     });

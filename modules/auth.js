@@ -9,8 +9,8 @@ export const renderLogin = () => {
     <section class="add-form">
       <h1>Вход</h1>
       <form id="login-form">
-        <input type="text" id="login" placeholder="Логин" required />
-        <input type="password" id="password" placeholder="Пароль" required />
+        <input type="text" id="login" placeholder="Логин" required autocomplete="off" />
+        <input type="password" id="password" placeholder="Пароль" required autocomplete="current-password" />
         <div class="form-loading" style="display: none;">Вход...</div>
         <fieldset class="add-form-registry">
           <button type="submit">Войти</button>
@@ -77,9 +77,9 @@ export const renderRegister = () => {
     <section class="add-form">
       <h1>Регистрация</h1>
       <form id="register-form">
-        <input type="text" id="reg-name" placeholder="Имя" required />
-        <input type="text" id="reg-login" placeholder="Логин" required />
-        <input type="password" id="reg-password" placeholder="Пароль" required />
+        <input type="text" id="reg-name" placeholder="Имя" required autocomplete="off" />
+        <input type="text" id="reg-login" placeholder="Логин" required autocomplete="off" />
+        <input type="password" id="reg-password" placeholder="Пароль" required autocomplete="current-password" />
         <div class="form-loading" style="display: none;">Регистрация...</div>
         <fieldset class="add-form-registry">
           <button type="submit">Зарегистрироваться</button>
