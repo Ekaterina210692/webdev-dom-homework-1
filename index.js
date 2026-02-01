@@ -4,25 +4,37 @@ import { renderLogin, renderRegister } from "/modules/auth.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+    console.log('Инициализация приложения');
+    
     const savedToken = getToken();
-
+    console.log('Сохраненный токен:', savedToken);
+    
     if (savedToken) {
       setToken(savedToken);
     }
-
+    
     await loadComments();
     renderApp();
   } catch (error) {
     console.error("Ошибка при инициализации:", error);
     alert("Произошла ошибка при загрузке приложения");
   }
-
-  document.addEventListener("click", (event) => {
-    if (event.target.id === "login-button") {
-      renderLogin();
-    }
-    if (event.target.id === "register-button") {
-      renderRegister();
-    }
-  });
 });
+document.addEventListener("click", (event) => {
+  if (event.target.id === "login-button") {
+    renderLogin();
+  }
+  if (event.target.id === "register-button") {
+    renderRegister();
+  }
+});
+const loginButton = document.getElementById("login-button");
+const registerButton = document.getElementById("register-button");
+
+if (loginButton) {
+  loginButton.addEventListener("click", renderLogin);
+}
+
+if (registerButton) {
+  registerButton.addEventListener("click", renderRegister);
+}

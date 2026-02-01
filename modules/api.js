@@ -1,29 +1,31 @@
 const baseUrl = "https://wedev-api.sky.pro/api/v2/ekaterinasin";
 const authHost = "https://wedev-api.sky.pro/api/user";
 
-export let token = "";
+let token = "";
 
 export const setToken = (newToken) => {
+ if (!newToken) {
+    console.error('Попытка сохранить пустой токен!');
+    return;
+  }
+
   token = newToken;
   localStorage.setItem('token', newToken);
+  console.log('Токен сохранен:', newToken);
 };
 
 export const getToken = () => {
-  return localStorage.getItem('token') || '';
-};
+  const savedToken = localStorage.getItem('token');
+  if (!savedToken) {
+    console.warn('Токен не найден в localStorage');
+  }
+  
+  return savedToken || '';
+};;
 
 export const fetchComments = async () => {
   try {
-    const savedToken = getToken();
-    if (!savedToken) {
-      throw new Error("Отсутствует токен авторизации");
-    }
-
-    const response = await fetch(baseUrl + "/comments", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(baseUrl + "/comments");
 
     if (!response.ok) {
       throw new Error("Ошибка загрузки");
@@ -50,6 +52,7 @@ export const fetchComments = async () => {
 export const postComment = async (name, text) => {
   try {
     const currentToken = getToken();
+    console.log('Текущий токен:', currentToken);
     
     if (!currentToken) {
       throw new Error('Токен отсутствует');
@@ -62,7 +65,7 @@ export const postComment = async (name, text) => {
     const response = await fetch(baseUrl + "/comments", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${currentToken}`,
       },
       body: JSON.stringify({ name, text }),
     });
@@ -89,17 +92,24 @@ export const postComment = async (name, text) => {
 
 export const loginUser = async (login, password) => {
   try {
-    const response = await fetch('/api/user/login', {
+    const response = await fetch(`${authHost}/login`, {
       method: "POST",
       body: JSON.stringify({ login, password }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
       throw new Error("Неверные логин или пароль");
     }
 
     const data = await response.json();
+    console.log('Полученные данные при авторизации:', data);
+
+    if (!data.token) {
+      throw new Error('Токен не получен');
+    }
+console.log('Полученный токен:', data.user.token);
+
+setToken(data.user.token);
     return data.token;
   } catch (error) {
     throw new Error(`Ошибка авторизации: ${error.message}`);
@@ -108,24 +118,24 @@ export const loginUser = async (login, password) => {
 
 export const registerUser = async (name, login, password) => {
   try {
-    const response = await fetch('/api/user', {
+    const response = await fetch(`${authHost}`, {
       method: "POST",
       body: JSON.stringify({ name, login, password }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 409) {
-        throw new Error("Пользователь с таким логином уже существует");
-      }
-      if (response.status === 400) {
-        throw new Error("Неверные данные");
-      }
-      throw new Error("Ошибка регистрации");
+       throw new Error('Ошибка регистрации');
     }
 
-    return response;
+    const data = await response.json();
+    console.log('Полученные данные при регистрации:', data);
+    
+    if (!data.token) {
+      throw new Error('Токен не получен');
+    }
+
+    return data.token;
   } catch (error) {
     throw new Error(`Ошибка регистрации: ${error.message}`);
   }
-};
+}

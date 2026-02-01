@@ -1,5 +1,5 @@
 import { comments, sanitizeHtml, updateComments } from "/modules/comments.js";
-import { postComment, token, fetchComments } from "/modules/api.js";
+import { postComment, getToken, fetchComments } from "/modules/api.js";
 
 let userName = "";
 
@@ -62,7 +62,7 @@ export const renderAddForm = () => {
     formContainer.className = "add-form-container";
     container.appendChild(formContainer);
   }
-  if (!token) {
+  if (!getToken()) {
     formContainer.innerHTML = `
       <p>Чтобы отправить комментарий, 
         <button id="login-button">Войти</button> 
@@ -71,7 +71,6 @@ export const renderAddForm = () => {
       </p>
     `;
   } else {
-    const name = userName || '';
     formContainer.innerHTML = `
       <div class="add-form">
         <input type="text" class="add-form-name" id="name-input" value="${userName}" disabled />
@@ -140,7 +139,7 @@ export function initAddCommentHandler(formContainer) {
     loading.style.display = "block";
 
     try {
-      const newComment = await postComment(userName, text);
+      await postComment(userName, text);
       await loadComments(); 
     } catch (error) {
       alert("Ошибка при отправке комментария: " + error.message);
