@@ -1,3 +1,5 @@
+import { setUserName } from "/modules/render.js"
+
 const baseUrl = "https://wedev-api.sky.pro/api/v2/ekaterinasin";
 const authHost = "https://wedev-api.sky.pro/api/user";
 
@@ -51,15 +53,21 @@ export const fetchComments = async () => {
 
 export const postComment = async (name, text) => {
   try {
+    if (typeof name !== 'string' || typeof text !== 'string') {
+      throw new Error("Некорректный тип данных");
+    }
+    if (!name.trim() || !text.trim()) {
+      throw new Error("Поля не могут быть пустыми");
+    }
+    if (name.length < 3 || text.length < 3) {
+      throw new Error("Имя и комментарий должны быть не короче 3 символов");
+    }
+
     const currentToken = getToken();
     console.log('Текущий токен:', currentToken);
     
     if (!currentToken) {
       throw new Error('Токен отсутствует');
-    }
-    
-    if (typeof name !== 'string' || typeof text !== 'string' || !name.trim() || !text.trim()) {
-      throw new Error("Некорректные данные комментария");
     }
 
     const response = await fetch(baseUrl + "/comments", {
@@ -104,13 +112,14 @@ export const loginUser = async (login, password) => {
     const data = await response.json();
     console.log('Полученные данные при авторизации:', data);
 
-    if (!data.token) {
+    if (!data.user || !data.user.token) {
       throw new Error('Токен не получен');
     }
-console.log('Полученный токен:', data.user.token);
 
-setToken(data.user.token);
-    return data.token;
+    const { token, name } = data.user;
+    setToken(token);
+    setUserName(name); 
+    return token;
   } catch (error) {
     throw new Error(`Ошибка авторизации: ${error.message}`);
   }

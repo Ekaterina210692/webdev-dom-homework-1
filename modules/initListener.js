@@ -15,41 +15,37 @@ export const initAddCommentHandler = (renderComments) => {
       return;
     }
 
-    document.querySelector(".form-loading").style.display = "block";
-    document.querySelector(".add-form").style.display = "none";
-
     try {
+      document.querySelector(".form-loading").style.display = "block";
+      document.querySelector(".add-form").style.display = "none";
+
       const sanitizedName = sanitizeHtml(name);
       const sanitizedComment = sanitizeHtml(comment);
 
       await postComment(sanitizedName, sanitizedComment);
 
-      document.querySelector(".form-loading").style.display = "none";
-      document.querySelector(".add-form").style.display = "flex";
-
       const updatedComments = await fetchComments();
       updateComments(updatedComments);
       renderComments();
-
-      document.querySelector(".form-loading").style.display = "none";
-      document.querySelector(".add-form").style.display = "flex";
-
-      nameInput.value = "";
-      textInput.value = "";
     } catch (error) {
+      let message;
+
       if (error.message.includes("failed to fetch")) {
-        alert("нет интернета, попробуйте позже");
+        message = "нет интернета, попробуйте позже";
       } else if (error.message.includes("сервер сломался")) {
-        alert("сервер сломался, попробуй позже");
+        message = "сервер сломался, попробуй позже";
       } else if (error.message.includes("имя и комментарии обязательны")) {
-        alert(
-          "имя пользователя и комментарий должны быть не короче 3х символов"
-        );
+        message =
+          "имя пользователя и комментарий должны быть не короче 3х символов";
       } else {
-        alert("Произошла ошибка: " + error.message);
+        message = "Произошла ошибка: " + error.message;
       }
+
+      alert(message);
+    } finally {
       document.querySelector(".form-loading").style.display = "none";
       document.querySelector(".add-form").style.display = "flex";
+
       nameInput.value = "";
       textInput.value = "";
     }

@@ -28,13 +28,3 @@ document.addEventListener("click", (event) => {
     renderRegister();
   }
 });
-const loginButton = document.getElementById("login-button");
-const registerButton = document.getElementById("register-button");
-
-if (loginButton) {
-  loginButton.addEventListener("click", renderLogin);
-}
-
-if (registerButton) {
-  registerButton.addEventListener("click", renderRegister);
-}

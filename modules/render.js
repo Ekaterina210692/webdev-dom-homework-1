@@ -12,7 +12,7 @@ export const renderApp = () => {
   if (!container) return;
 
   if (!comments || !Array.isArray(comments)) {
-    console.error('Комментарии не загружены');
+    console.error("Комментарии не загружены");
     return;
   }
 
@@ -84,8 +84,7 @@ export const renderAddForm = () => {
     initAddCommentHandler(formContainer);
   }
 
-  container.appendChild(formContainer);
-}
+};
 
 export const loadComments = async () => {
   const container = document.querySelector(".container");
@@ -176,16 +175,8 @@ document.addEventListener("click", (event) => {
   const comment = comments[index];
   if (!comment) return;
 
-  const textInput = document.getElementById("text-input");
-  if (textInput) {
-    textInput.value = `${comment.name}: ${comment.text}`;
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const savedName = localStorage.getItem("userName");
-  if (savedName) {
-    setUserName(savedName);
-  }
-  renderApp(); 
-});
+    const textInput = document.getElementById("textarea");
+    if (textInput) {
+      textInput.value = `${comment.name}: ${comment.text}`;
+    }
+})
