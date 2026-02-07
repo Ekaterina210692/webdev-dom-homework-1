@@ -168,15 +168,15 @@ document.addEventListener("click", (event) => {
 document.addEventListener("click", (event) => {
   if (event.target.closest(".like-button")) return;
 
-  const commentElement = event.target.closest(".comment");
+  const commentElement = event.target.closest(".comment-text");
   if (!commentElement) return;
 
   const index = Array.from(commentElement.parentNode.children).indexOf(commentElement);
   const comment = comments[index];
   if (!comment) return;
 
-    const textInput = document.getElementById("textarea");
-    if (textInput) {
-      textInput.value = `${comment.name}: ${comment.text}`;
-    }
+    const textInput = document.getElementById("text-input");
+  if (textInput) {
+    textInput.value = `${comment.name}: ${comment.text}`;
+  }
 })
