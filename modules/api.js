@@ -23,8 +23,16 @@ export const getToken = () => {
   }
   
   return savedToken || '';
-};;
+}
 
+export const getName = () => {
+  const savName = localStorage.getItem('name');
+  if (!savName) {
+    console.warn('имя не найдено в localStorage');
+  }
+  
+  return savName || '';
+}
 export const fetchComments = async () => {
   try {
     const response = await fetch(baseUrl + "/comments");

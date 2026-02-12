@@ -1,11 +1,15 @@
 import { getToken, setToken } from "/modules/api.js";
 import { renderApp, loadComments } from "/modules/render.js";
 import { renderLogin, renderRegister } from "/modules/auth.js";
+import { setUserName } from "./modules/render.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     console.log('Инициализация приложения');
-    
+    const savName = getName()
+     if (savName) {
+      setUserName(savName);
+    }
     const savedToken = getToken();
     console.log('Сохраненный токен:', savedToken);
     
