@@ -1,5 +1,5 @@
 import { loginUser, registerUser, setToken } from "/modules/api.js";
-import { setUserName, renderApp } from "/modules/render.js";
+import { setUserName, renderApp, loadComments } from "/modules/render.js";
 
 export const renderLogin = () => {
   const container = document.querySelector(".container");
@@ -44,9 +44,8 @@ export const renderLogin = () => {
       try {
         const newToken = await loginUser(login, password);
         setToken(newToken);
-        setUserName(login);
-        localStorage.setItem("userName", login);
-        renderApp();
+console.log('после входа')
+        await loadComments();
       } catch (error) {
         alert("Ошибка входа: " + error.message);
       } finally {
@@ -113,9 +112,10 @@ const form = container.querySelector("#register-form");
     loading.style.display = "block";
 
     try {
-      await registerUser(name, login, password);
-      alert("Регистрация успешна! Войдите в систему.");
-      renderLogin();
+      const token = await registerUser(name, login, password);
+      setToken(token);
+      await loadComments();
+      renderApp();;
     } catch (error) {
       alert("Ошибка: " + error.message);
     } finally {

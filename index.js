@@ -1,4 +1,4 @@
-import { getToken, setToken } from "/modules/api.js";
+import { getToken, setToken, getName } from "/modules/api.js";
 import { renderApp, loadComments } from "/modules/render.js";
 import { renderLogin, renderRegister } from "/modules/auth.js";
 import { setUserName } from "./modules/render.js";

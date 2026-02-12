@@ -4,6 +4,7 @@ import { postComment, getToken, fetchComments } from "/modules/api.js";
 let userName = "";
 
 export const setUserName = (name) => {
+  localStorage.setItem('name', sanitizeHtml(name) )
   userName = sanitizeHtml(name);
 };
 
@@ -46,9 +47,10 @@ export const renderComments = () => {
     })
     .join("");
 
-  const commentsList = document.querySelector(".comments");
-  if (commentsList) {
-    commentsList.innerHTML = html;
+    const commentsListHtml = `<ul class="comments">${html}</ul>`
+  const container = document.querySelector(".container");
+  if (container) {
+    container.innerHTML = commentsListHtml;
   }
 };
 
@@ -100,6 +102,7 @@ export const loadComments = async () => {
     updateComments(loadedComments);
     renderComments();
     renderAddForm();
+    console.log('lod')
   } catch (error) {
     console.error("Ошибка загрузки:", error);
 
